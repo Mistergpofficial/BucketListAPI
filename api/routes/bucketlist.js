@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const BucketListController = require('../controllers/BucketListController');
 const CheckAuth = require('../middleware/check-auth');
-const redis = require('redis');
-const client = redis.createClient();
+//const redis = require('redis');
+//const client = redis.createClient();
 
-//var client = require('redis').createClient(process.env.REDIS_URL);
+var client = require('redis').createClient(process.env.REDIS_URL);
 
 
 // create redis middleware
