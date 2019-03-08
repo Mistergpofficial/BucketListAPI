@@ -7,18 +7,7 @@ const CheckAuth = require('../middleware/check-auth');
 //const jwt = require('jsonwebtoken');
 
 //const config = require('../../config/db');
-
-const redis = require('redis');
-var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-const another = redis.createClient(rtg.port, rtg.hostname);
-const client = another.auth(rtg.auth.split(":")[1]);
-
-
-
-  // TODO: redistogo connection
-  // var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-  // var client = require("redis").createClient(rtg.port, rtg.hostname);
-  // client.auth(rtg.auth.split(":")[1]);
+var client = require('redis').createClient(process.env.REDIS_URL);
 
 
 // create redis middleware
