@@ -4,7 +4,7 @@
   "description": "An Ecommerce Shopping Cart Backend",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "engines": {
     "node": "11.1.0",
