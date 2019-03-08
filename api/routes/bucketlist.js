@@ -8,10 +8,10 @@ const CheckAuth = require('../middleware/check-auth');
 
 //const config = require('../../config/db');
 
-// const redis = require('redis');
-// var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-// const another = redis.createClient(rtg.port, rtg.hostname);
-// const client = another.auth(rtg.auth.split(":")[1]);
+const redis = require('redis');
+var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+const another = redis.createClient(rtg.port, rtg.hostname);
+const client = another.auth(rtg.auth.split(":")[1]);
 
 
 
@@ -44,8 +44,8 @@ let redisMiddleware = (req, res, next) => {
 
 router.post("/bucketlists", CheckAuth,  BucketListController.add);
 //router.get("/bucketlists/pagination", CheckAuth,  BucketListController.getAlll);
-router.get("/bucketlists/", CheckAuth,  BucketListController.getAll);
-router.get("/bucketlists/:id", CheckAuth, BucketListController.getOne);
+router.get("/bucketlists/", CheckAuth, redisMiddleware,  BucketListController.getAll);
+router.get("/bucketlists/:id", CheckAuth, redisMiddleware, BucketListController.getOne);
 router.patch("/bucketlists/:id", CheckAuth,  BucketListController.edit);
 router.delete("/bucketlists/:id", CheckAuth, BucketListController.delete);
 

@@ -5,10 +5,10 @@ const ItemController = require('../controllers/ItemController');
 //const client = redis.createClient(process.env.REDIS_URL);
 const CheckAuth = require('../middleware/check-auth');
 
-// const redis = require('redis');
-// var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-// const another = redis.createClient(rtg.port, rtg.hostname);
-// const client = another.auth(rtg.auth.split(":")[1]);
+const redis = require('redis');
+var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+const another = redis.createClient(rtg.port, rtg.hostname);
+const client = another.auth(rtg.auth.split(":")[1]);
 
   // TODO: redistogo connection
  // var rtg   = require("url").parse(process.env.REDISTOGO_URL);
@@ -33,8 +33,8 @@ let redisMiddleware = (req, res, next) => {
     });
   };
 router.post("/bucketlists/:id/items", CheckAuth, ItemController.addUp);
-router.get("/bucketlists/:id/items", CheckAuth, ItemController.findAll );
-router.get('/bucketlists/:id/items/:item', CheckAuth, ItemController.getJustOne);
+router.get("/bucketlists/:id/items", CheckAuth, redisMiddleware, ItemController.findAll );
+router.get('/bucketlists/:id/items/:item', CheckAuth, redisMiddleware, ItemController.getJustOne);
 router.patch('/bucketlists/:id/items/:item', CheckAuth, ItemController.update);
 router.delete('/bucketlists/:id/items/:item', CheckAuth, ItemController.destroy);
 
