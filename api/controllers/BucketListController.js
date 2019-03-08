@@ -1,5 +1,7 @@
 const Mongoose = require('mongoose');
+const Item = require('../models/item');
 const BucketList = require('../models/bucketlist');
+
 
 exports.add = (req, res) => {
     if(!req.body.bucket_list_name){
@@ -154,18 +156,41 @@ exports.edit = (req, res) => {
     }
 }
 
+
+// delete product by ID
 exports.delete = (req, res) => {
-    const id = req.params.id
-    BucketList.findOneAndDelete({_id:id}, (err, result) => {
-       if(result){
-           Item.delete().where('bucketlist').equals(id).then(resul => {
-               if(resul){
-                res.status(200).json('Deleted')
-               }else{
-                res.status(404).json('Failed to delete')
-               }
-           })
-       }
+    const id = req.params.id;
+    BucketList.findById(id).select('_id bucket_list_name')
+    .exec()
+    .then(bucki => {
+        if(!bucki) {
+            res.status(404).json({
+                message: 'Bucket List Not Found'
+            });
+        }
     })
-    
+   BucketList.remove({_id: id}).exec().then(function (result) {
+      if(result){
+          Item.remove({bucketlist: id}).exec().then(resul => {
+              if(resul){
+                res.status(200).json({
+                    message: 'Bucketlist Deleted Successfully',
+                });
+              }else{
+                res.status(404).json({
+                    message: 'Failed',
+                }); 
+              }
+          })
+      }else{
+        res.status(404).json({
+            message: 'Failed',
+        }); 
+      }
+   }).catch(function (err) {
+       console.log(err);
+       res.status(500).json({
+           error: err
+       })
+   });
 }

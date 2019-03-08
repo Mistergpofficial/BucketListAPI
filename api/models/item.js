@@ -12,6 +12,10 @@ const itemSchema = new schema({
         type: String,
       //  required: [true, 'Item Name is required']
     },
+    full_name: {
+        type: String,
+        ref: 'User',
+    },
    
       createdAt: {
           type: Date,

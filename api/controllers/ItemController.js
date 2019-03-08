@@ -22,7 +22,8 @@ exports.addUp = (req, res) => {
     const item = new Item({
             _id: Mongoose.Types.ObjectId(),
             bucketlist: req.body.bucketlist_id,
-            item_name: req.body.item_name 
+            item_name: req.body.item_name ,
+            full_name: req.body.full_name
        });
        item.save ().then(result => {
            if(result) {
@@ -40,6 +41,7 @@ exports.findAll  = (req, res) => {
     .then(docs => {
         if(docs.length > 0){
             const response = {
+                count: docs.length,
                 itemArray: docs.filter(doc => {
                     return {
                         _id: doc._id,
@@ -53,7 +55,9 @@ exports.findAll  = (req, res) => {
             }
             res.status(200).json(response);
         }else{
-            res.status(404).json('No record found')
+            res.status(404).json({
+                message: 'No Bucket List Item is Found'
+            });
         }
     })
     .catch(err => {
@@ -123,4 +127,34 @@ exports.destroy = (req, res) =>{
             res.status(404).json('Failed to delete')
         }
     })
+}
+
+// delete product by ID
+exports.destroy = (req, res) => {
+    const id = req.params.item;
+    Item.findById(id).select('_id item_name')
+    .exec()
+    .then(iti => {
+        if(!iti) {
+            res.status(404).json({
+                message: 'Item Not Found'
+            });
+        }
+    })
+   Item.remove({_id: id}).exec().then(function (result) {
+      if(result){
+        res.status(200).json({
+            message: 'Bucketlist Deleted Successfully',
+        });
+      }else{
+        res.status(404).json({
+            message: 'Failed',
+        });
+      }
+    }).catch(function (err) {
+       console.log(err);
+       res.status(500).json({
+           error: err
+       })
+   });
 }
