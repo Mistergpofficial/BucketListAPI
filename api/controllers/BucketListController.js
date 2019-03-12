@@ -1,6 +1,11 @@
 const Mongoose = require('mongoose');
 const Item = require('../models/item');
 const BucketList = require('../models/bucketlist');
+//const redis = require('redis');
+//const client = redis.createClient();
+
+
+var client = require('redis').createClient(process.env.REDIS_URL);
 
 
 
@@ -27,30 +32,65 @@ exports.add = (req, res) => {
             }
         });
 
+        BucketList.find()
+        .select('_id bucket_list_name full_name createdAt updatedAt')
+        .exec()
+        .then(bucketlists => {
+            if(!bucketlists){
+                res.status().json('Bucket List Not Found')
+            }else{
+                const response = {
+                    count: bucketlists.length,
+                    bucketArray: bucketlists.map(bucketlist => {
+                        return {
+                            _id: bucketlist._id,
+                            bucket_list_name: bucketlist.bucket_list_name,
+                            full_name: bucketlist.full_name,
+                            createdAt: bucketlist.createdAt,
+                            updatedAt: bucketlist.updatedAt
+                        }
+                    })
+                }
+                    let key = "getAll"
+                    client.set(key, JSON.stringify(response));
+                     res.json(response);
+            }
+        })
+
     }
 }
 
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
+    let key = "getAll"
+    //"__expIress__" + req.originalUrl || req.url;
+    client.get(key, function(err, reply){
+      if(err){
+          res.send(null);
+      }else if(reply){
+          res.send(reply);
+      }else{
     BucketList.find()
     .select('_id bucket_list_name full_name createdAt updatedAt')
     .exec()
     .then(bucketlists => {
-        if(bucketlists.length > 0){
+        if(!bucketlists){
+            res.status().json('Bucket List Not Found')
+        }else{
             const response = {
                 count: bucketlists.length,
-                bucketArray: bucketlists.filter(bucketlist => {
+                bucketArray: bucketlists.map(bucketlist => {
                     return {
                         _id: bucketlist._id,
-                        name: bucketlist.name
+                        bucket_list_name: bucketlist.bucket_list_name,
+                        full_name: bucketlist.full_name,
+                        createdAt: bucketlist.createdAt,
+                        updatedAt: bucketlist.updatedAt
                     }
                 })
             }
-            res.status(200).json(response);
-        }else{
-            res.status(404).json({
-                message: 'No Bucket List is Found'
-            });
+                client.set(key, JSON.stringify(response));
+                 res.json(response);
         }
     })
     .catch(err => {
@@ -59,6 +99,9 @@ exports.getAll = (req, res) => {
         })
     });
 }
+});
+}
+
 
 // exports.getAlll = (req, res) => {
 //   let perPage = 2;
@@ -109,89 +152,173 @@ exports.getAll = (req, res) => {
 // }
 
 exports.getOne = (req, res) => {
+    let key = "getOne";
+    client.get(key, function(err, reply){
+      if(err){
+          res.send(null);
+      }else if(reply){
+          res.send(reply);
+      }else{
     const id = req.params.id
     BucketList.findById(id)
     .select('_id bucket_list_name full_name createdAt updatedAt')
-    .then(bucketlist => {
-        if(bucketlist){
-            res.status(200).json(bucketlist);
+    .then(bucketlist => { 
+        if(!bucketlist){
+            res.status(404).json('No provided entry for the given ID');
         }else{
-            res.staus(404).json('No provided entry for the given ID')
+            client.set(key, JSON.stringify(bucketlist));
+                 res.send(bucketlist);
         }
     })
     .catch(err => {
         res.status(500).json({
             error: err
         })
-    });
+    })
+      }
+    })
 }
 
-exports.edit = (req, res) => {
+exports.edit = (req, res, next) => {
     const id = req.params.id
     if(!req.body.bucket_list_name){
         res.status(422).json('All Fields are required')
     }else{
-        BucketList.findById(id)
-        .exec()
-        .then(bucketlist => {
-            if(bucketlist){
-                BucketList.update({_id: id}, {$set: {bucket_list_name: req.body.bucket_list_name}}).then(result => {
-                    if(result) {
-                        res.status(200).json({
-                            msg: 'Update is successful',
-                            updateArray: result
-                        })
-                    }else{
-                        res.status(404).json('Update Failed')
+    BucketList.findById(id)
+.exec()
+.then(bucketlist => {
+    if(bucketlist){
+        BucketList.update({_id: id}, {$set: {bucket_list_name: req.body.bucket_list_name}}).then(result => {
+          if(!result){
+            res.status(404).json('Update Failed')
+          }else{
+            BucketList.find()
+    .select('_id bucket_list_name full_name createdAt updatedAt')
+    .exec()
+    .then(bucketlists => {
+        if(!bucketlist){
+            res.status(404).json({
+                message: 'No Bucket List is Found'
+            });
+        }else{
+            const response = {
+                count: bucketlists.length,
+                bucketArray: bucketlists.map(bucketlist => {
+                    return {
+                        _id: bucketlist._id,
+                        bucket_list_name: bucketlist.bucket_list_name,
+                        full_name: bucketlist.full_name,
+                        createdAt: bucketlist.createdAt,
+                        updatedAt: bucketlist.updatedAt
                     }
                 })
-            }else{
-                res.status(500).json('No record found');
             }
-        })
-        .catch(err => {
-            res.status(500).json({
-                error: err
-            })
-        });
+                let key = "getAll"
+                client.set(key, JSON.stringify(response));
+                 res.json(response);
+
+                 BucketList.findById(id)
+                 .select('_id bucket_list_name full_name createdAt updatedAt')
+                 .then(bucketlist => { 
+                     if(!bucketlist){
+                         res.status(404).json('No provided entry for the given ID');
+                     }else{
+                        let key1 = "getOne"
+                         client.set(key1, JSON.stringify(bucketlist));
+                              res.send(bucketlist);
+                     }
+                 })
+
+                 
+        }
+        
+     });
+  }
+})
+    }else{
+        res.status(500).json('Bucket List Not found');
+    }
+})
+.catch(err => {
+    res.status(500).json({
+        error: err
+    })
+});
+
+       
     }
 }
-
-
 // delete product by ID
 exports.delete = (req, res) => {
     const id = req.params.id;
     BucketList.findById(id).select('_id bucket_list_name')
     .exec()
-    .then(bucki => {
-        if(!bucki) {
-            res.status(404).json({
-                message: 'Bucket List Not Found'
+    .then(bucki => { 
+        if(!bucki){
+            res.status(404).json('Bucket List Not Found');
+        }else{
+            BucketList.remove({_id: id}).exec().then(function (result) { 
+                if(!result){
+                    res.status(404).json({
+                        message: 'Failed',
+                    }); 
+                }else{
+                    Item.remove({bucketlist: id}).exec().then(resul => { 
+                        if(!resul){
+                            res.status(404).json({
+                                message: 'Failed',
+                            });  
+                        }else{
+                            BucketList.find()
+                            .select('_id bucket_list_name full_name createdAt updatedAt')
+                            .exec()
+                            .then(bucketlists => {
+                                if(!bucketlists){
+                                    res.status().json('Bucket List Not Found')
+                                }else{ 
+                                    const response = {
+                                        count: bucketlists.length,
+                                        bucketArray: bucketlists.map(bucketlist => {
+                                            return {
+                                                _id: bucketlist._id,
+                                                bucket_list_name: bucketlist.bucket_list_name,
+                                                full_name: bucketlist.full_name,
+                                                createdAt: bucketlist.createdAt,
+                                                updatedAt: bucketlist.updatedAt
+                                            }
+                                        })
+                                    }
+                                    let key = "getAll"
+                                    client.set(key, JSON.stringify(response));
+                                     res.json(response);
+    
+                                     let key1 = "getOne"
+                                     client.del(key1);
+                                } 
+                            });
+
+
+
+
+                        }
+                    });
+                }
             });
         }
-    })
-   BucketList.remove({_id: id}).exec().then(function (result) {
-      if(result){
-          Item.remove({bucketlist: id}).exec().then(resul => {
-              if(resul){
-                res.status(200).json({
-                    message: 'Bucketlist Deleted Successfully',
-                });
-              }else{
-                res.status(404).json({
-                    message: 'Failed',
-                }); 
-              }
-          })
-      }else{
-        res.status(404).json({
-            message: 'Failed',
-        }); 
-      }
-   }).catch(function (err) {
-       console.log(err);
-       res.status(500).json({
-           error: err
-       })
-   });
+    });
+     
+}
+
+exports.search = (req, res) => {
+   var query = {};
+   if(req.query.bucketListQuery){
+       query.bucket_list_name = { "$regex": req.query.bucketListQuery, "$options": "i"};
+   }
+   BucketList.find(query, function(err, result){
+       if(err){
+           res.status(500).json("Not a valid search");
+       }else{
+           res.json(result)
+       }
+   })
 }

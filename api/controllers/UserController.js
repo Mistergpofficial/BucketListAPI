@@ -3,6 +3,9 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../../config/db');
+const randtoken = require('rand-token');
+
+var refreshTokens = {} 
 
 exports.create = (req, res) => {
     const email = req.body.email;
@@ -72,9 +75,12 @@ exports.add = (req, res) => {
                 let token = jwt.sign(payload, `${config.secret}`,{
                     expiresIn:"1h"
                 });
+                var refreshToken = randtoken.uid(256) 
+             //   refreshTokens[refreshToken] =   res.json({token: token, refreshToken: refreshToken, user: payload}) 
                 return res.status(200).json({
                     message: 'Auth Successful',
                     token: token,
+                    refreshToken: refreshToken,
                     user: payload
                 });
             }
@@ -84,3 +90,8 @@ exports.add = (req, res) => {
         });
     }
 }
+
+
+// exports.refreshToken = (req, res) => {
+
+// }
