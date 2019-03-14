@@ -192,7 +192,7 @@ exports.update = (req, res) => {
 
 
 
-// delete product by ID
+// delete bucket list item by ID
 exports.destroy = (req, res) => {
     const id = req.params.item;
     Item.findById(id)

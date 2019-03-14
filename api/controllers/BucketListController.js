@@ -63,13 +63,6 @@ exports.add = (req, res) => {
 
 exports.getAll = (req, res, next) => {
     let key = "getAll"
-    //"__expIress__" + req.originalUrl || req.url;
-    client.get(key, function(err, reply){
-      if(err){
-          res.send(null);
-      }else if(reply){
-          res.send(reply);
-      }else{
     BucketList.find()
     .select('_id bucket_list_name full_name createdAt updatedAt')
     .exec()
@@ -98,8 +91,7 @@ exports.getAll = (req, res, next) => {
             error: err
         })
     });
-}
-});
+
 }
 
 
@@ -153,12 +145,6 @@ exports.getAll = (req, res, next) => {
 
 exports.getOne = (req, res) => {
     let key = "getOne";
-    client.get(key, function(err, reply){
-      if(err){
-          res.send(null);
-      }else if(reply){
-          res.send(reply);
-      }else{
     const id = req.params.id
     BucketList.findById(id)
     .select('_id bucket_list_name full_name createdAt updatedAt')
@@ -174,8 +160,6 @@ exports.getOne = (req, res) => {
         res.status(500).json({
             error: err
         })
-    })
-      }
     })
 }
 
@@ -248,7 +232,7 @@ exports.edit = (req, res, next) => {
        
     }
 }
-// delete product by ID
+// delete bucket list by ID
 exports.delete = (req, res) => {
     const id = req.params.id;
     BucketList.findById(id).select('_id bucket_list_name')
