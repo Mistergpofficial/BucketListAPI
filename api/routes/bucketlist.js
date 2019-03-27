@@ -24,7 +24,7 @@ const CheckAuth = require('../middleware/check-auth');
 
 
 
-router.get("/bucketlists/search",  BucketListController.search);
+router.post("/bucketlists/search",  BucketListController.search);
 router.post("/bucketlists", CheckAuth,  BucketListController.add);
 //router.get("/bucketlists/pagination", CheckAuth,  BucketListController.getAlll);
 router.get("/bucketlists/", CheckAuth,  BucketListController.getAll);

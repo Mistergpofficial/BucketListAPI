@@ -9,6 +9,7 @@ const bucketListSchema = new schema({
     },
     bucket_list_name: {
         type: String,
+        unique: true
      //   required: [true, 'Name Field is required']
     },
 

@@ -4,6 +4,11 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const app = express()
+const redis = require('redis');
+const client = redis.createClient();
+client.on("connect", function () {
+    console.log("Connected to redis...");
+});
 
 
 //mongoose.connect(`mongodb://${config.mongo.db_connection}/${config.mongo.db_name}`, {useNewUrlParser: true})
