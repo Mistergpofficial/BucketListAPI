@@ -66,20 +66,21 @@ exports.add = (req, res) => {
         .then(result => {
             if(result){
             let key1 = "bucketlists"
+            
             client.hmset(key1, [
                 'id' , saveBucketList._id,
                 'bucket_list_name', saveBucketList.bucket_list_name,
                 'full_name' , saveBucketList.full_name
-             ], (err,resu) => {
-                 if(err){
+            ], function(err, reply) {
+                if(err){
                     res.status(500).json({
                         error: err
                     })
-                 }
-                 res.status(200).json({
-                    message: resu
+                }
+                res.status(200).json({
+                    message: reply
                 })
-             });
+         });
             let key = "bucketlists/search" + " " + req.body.bucket_list_name;
             client.hmset(key, [
            'id' , saveBucketList._id,
@@ -99,6 +100,9 @@ exports.add = (req, res) => {
                 res.status(500).json('Failed');
             }
         });
+
+
+           
 
         
 
