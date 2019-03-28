@@ -65,6 +65,7 @@ exports.add = (req, res) => {
         saveBucketList.save()
         .then(result => {
             if(result){
+            
           let key = "bucketlists/search" + " " + req.body.bucket_list_name;
             client.hmset(key, [
            'id' , saveBucketList._id,
@@ -80,11 +81,7 @@ exports.add = (req, res) => {
                 message: reply
             })
         });
-            }else{
-                res.status(500).json('Failed');
-            }
-        });
-
+            
         let key1 = "bucketlists";
         client.hmset(key1, [
             'id' , saveBucketList._id,
@@ -100,6 +97,12 @@ exports.add = (req, res) => {
                  message: reply
              })
          });
+        
+        }else{
+                res.status(500).json('Failed');
+            }
+        });
+
     }
 }
 
