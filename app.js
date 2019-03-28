@@ -4,8 +4,9 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const app = express()
-const redis = require('redis');
-const client = redis.createClient();
+//const redis = require('redis');
+//const client = redis.createClient();
+var client = require('redis').createClient(process.env.REDIS_URL);
 client.on("connect", function () {
     console.log("Connected to redis...");
 });
