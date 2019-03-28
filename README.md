@@ -1,15 +1,25 @@
-# BucketListAPI
-An API for a BucketList service built using the Node JS and Redis
+# Bucketlist API
 
 ## Introduction
-The innovative bucketlist app is an application that allows users to record and share things they want to achieve or experience before reaching a certain age meeting the needs of keeping track of their dreams and goals. This is the backend API for enabling users to perform crud operations on bucketlists and items with user persistence
+A Bucket List is a list of things that one has not done before but wants to do before dying. This is an API for an online Bucket List service using Node JS.
+
+## Requirements
+The building blocks for this Bucket List API Service are:
+
+Javascript<br/>
+MongoDB<br/>
+Redis<br/>
+Node JS<br/>
+JWT<br/>
 
 ## How to run this application
 In order to run the bucketlist API backend, change directory into the project folder. First of all, install all the requirements by running: <br/>
 npm install <br>
+
 # Run the express application by typing:<br>
 nodemon server.js<br>
 This will start the server at http://127.0.0.1:2000/<br>
+
 ## API Endpoints
 | URL Endpoint                                    | HTTP Request  | Resource Accessed                       | Access Type |
 | :---:                                           | :-:           | :-:                                     | :-:         |
