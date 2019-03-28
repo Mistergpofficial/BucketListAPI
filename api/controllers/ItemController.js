@@ -4,11 +4,11 @@ const BucketList = require('../models/bucketlist');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../../config/db');
-const redis = require('redis');
-const client = redis.createClient();
+//const redis = require('redis');
+//const client = redis.createClient();
 
 
-//var client = require('redis').createClient(process.env.REDIS_URL);
+var client = require('redis').createClient(process.env.REDIS_URL);
 
 
 exports.addUp = (req, res) => {

@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../../config/db');
 const randtoken = require('rand-token');
 
-var refreshTokens = {} 
+
 
 exports.create = (req, res) => {
     const email = req.body.email;
