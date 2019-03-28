@@ -32,3 +32,8 @@ This will start the server at http://127.0.0.1:2000/<br>
 ![alt text](https://raw.githubusercontent.com/Mistergpofficial/BucketListAPI/master/items.PNG)
 
 # API SCREENSHOTS
+![alt text](https://raw.githubusercontent.com/Mistergpofficial/BucketListAPI/master/login.PNG)
+![alt text](https://raw.githubusercontent.com/Mistergpofficial/BucketListAPI/master/Allbucketlists.PNG)
+![alt text](https://raw.githubusercontent.com/Mistergpofficial/BucketListAPI/master/Individual.PNG)
+![alt text](https://raw.githubusercontent.com/Mistergpofficial/BucketListAPI/master/item.PNG)
+![alt text](https://raw.githubusercontent.com/Mistergpofficial/BucketListAPI/master/item1.PNG)
